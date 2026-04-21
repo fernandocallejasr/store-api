@@ -1,4 +1,4 @@
-package com.sticker_store.store;
+package io.github.fernandocallejasr.stickerstore;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

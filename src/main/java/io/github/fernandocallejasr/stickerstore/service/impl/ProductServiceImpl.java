@@ -1,6 +1,6 @@
 package io.github.fernandocallejasr.stickerstore.service.impl;
 
-import io.github.fernandocallejasr.stickerstore.entity.Product;
+import io.github.fernandocallejasr.stickerstore.dto.ProductResponse;
 import io.github.fernandocallejasr.stickerstore.repository.ProductRepository;
 import io.github.fernandocallejasr.stickerstore.service.ProductService;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getProducts() {
-        return productRepository.findAll();
+    public List<ProductResponse> getProducts() {
+        return productRepository.findAll()
+                                .stream()
+                                .map(ProductResponse::from)
+                                .toList();
     }
 }

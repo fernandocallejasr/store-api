@@ -1,6 +1,5 @@
 INSERT INTO products (name, description, price, popularity, image_url, created_at, created_by, updated_at, updated_by)
-VALUES ('Developer', 'Code Wizard!', 5.00, 85, '/stickers/developer.png', CURRENT_TIMESTAMP, 'admin', NULL, NULL),
-       ('Break', 'Hey, lets take a breather and start fresh on the next line', 4.50, 40, '/stickers/break.png', CURRENT_TIMESTAMP, 'admin', NULL, NULL),
+VALUES ('Break', 'Hey, lets take a breather and start fresh on the next line', 4.50, 40, '/stickers/break.png', CURRENT_TIMESTAMP, 'admin', NULL, NULL),
        ('Not a bug', 'It''s a surprise functionality.', 6.00, 98, '/stickers/itsnotabug.png', CURRENT_TIMESTAMP, 'admin', NULL, NULL),
        ('Devster', 'They exist!', 5.00, 72, '/stickers/EatSleepCode.png', CURRENT_TIMESTAMP, 'admin', NULL, NULL),
        ('CodeSmasher', 'Fearless developer!', 7.50, 88, '/stickers/BreakingCode.png', CURRENT_TIMESTAMP, 'admin', NULL, NULL),

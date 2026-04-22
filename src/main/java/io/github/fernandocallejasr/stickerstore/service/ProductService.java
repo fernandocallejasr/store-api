@@ -1,9 +1,9 @@
 package io.github.fernandocallejasr.stickerstore.service;
 
-import io.github.fernandocallejasr.stickerstore.entity.Product;
+import io.github.fernandocallejasr.stickerstore.dto.ProductResponse;
 
 import java.util.List;
 
 public interface ProductService {
-    List<Product> getProducts();
+    List<ProductResponse> getProducts();
 }

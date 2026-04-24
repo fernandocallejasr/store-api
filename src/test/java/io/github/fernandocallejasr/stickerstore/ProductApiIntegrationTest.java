@@ -27,4 +27,18 @@ public class ProductApiIntegrationTest {
         assertThat(response.getBody()[0].name()).isNotNull();
     }
 
+    @Test
+    void corsPreflight_allowsViteOrigin() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setOrigin("http://localhost:5173");
+        headers.set("Access-Control-Request-Method", "GET");
+
+        ResponseEntity<Void> response = restTemplate.exchange(
+                "/api/v1/products", HttpMethod.OPTIONS,
+                new HttpEntity<>(headers), Void.class);
+
+        assertThat(response.getHeaders().getAccessControlAllowOrigin())
+                .isEqualTo("http://localhost:5173");
+    }
+
 }

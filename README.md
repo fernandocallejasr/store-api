@@ -1,7 +1,7 @@
 # Stickerstore
 
 A Spring Boot REST API for a stickers e-commerce store.
-Built with Spring Boot 4.0.5, Java 25, JPA + Flyway, runs on H2 (dev) or Postgres (prod).
+Built with Spring Boot 4.0.6, Java 25, JPA + Flyway, runs on H2 (dev) or Postgres (prod).
 
 ## Quick start (in-memory H2)
 ```

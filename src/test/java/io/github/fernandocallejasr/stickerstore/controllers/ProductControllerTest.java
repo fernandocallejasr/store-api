@@ -1,10 +1,13 @@
 package io.github.fernandocallejasr.stickerstore.controllers;
 
 import io.github.fernandocallejasr.stickerstore.dto.ProductResponse;
+import io.github.fernandocallejasr.stickerstore.exception.GlobalExceptionHandler;
+import io.github.fernandocallejasr.stickerstore.exception.ProductNotFoundException;
 import io.github.fernandocallejasr.stickerstore.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -18,6 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProductController.class)
+@Import(GlobalExceptionHandler.class)
 public class ProductControllerTest {
 
     @Autowired MockMvc mockMvc;
@@ -45,5 +49,37 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$[0].price").value(4.50))
                 .andExpect(content().contentType("application/json"));
 
+    }
+
+    @Test
+    void getProductById_returns200WithJson() throws Exception {
+        ProductResponse productResponse = new ProductResponse(1L,
+                "Break",
+                "desc",
+                new BigDecimal("4.50"),
+                40,
+                "/stickers/break.png",
+                Instant.parse("2026-01-01T00:00:00Z"));
+
+        when(productService.getProductById(1L)).thenReturn(productResponse);
+
+        mockMvc.perform(get(PRODUCTS_PATH + "/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.productId").value(1))
+                .andExpect(jsonPath("$.description").value("desc"))
+                .andExpect(jsonPath("$.name").value("Break"))
+                .andExpect(jsonPath("$.price").value(4.50))
+                .andExpect(jsonPath("$.imageUrl").value("/stickers/break.png"))
+                .andExpect(content().contentType("application/json"));
+    }
+
+    @Test
+    void getProductById_returns404WhenNotFound() throws Exception {
+        when(productService.getProductById(999L)).thenThrow(new ProductNotFoundException(999L));
+
+        mockMvc.perform(get(PRODUCTS_PATH + "/999"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.detail").value("Product not found for id: 999"));
     }
 }

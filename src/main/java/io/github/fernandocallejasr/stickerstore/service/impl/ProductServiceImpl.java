@@ -20,16 +20,12 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public List<ProductResponse> getProducts() {
-		return productRepository.findAll()
-								.stream()
-								.map(ProductResponse::from)
-								.toList();
+		return productRepository.findAll().stream().map(ProductResponse::from).toList();
 	}
 
 	@Override
 	public ProductResponse getProductById(long productId) {
-		return productRepository.findById(productId)
-								.map(ProductResponse::from)
-								.orElseThrow(() -> new ProductNotFoundException(productId));
+		return productRepository.findById(productId).map(ProductResponse::from)
+				.orElseThrow(() -> new ProductNotFoundException(productId));
 	}
 }

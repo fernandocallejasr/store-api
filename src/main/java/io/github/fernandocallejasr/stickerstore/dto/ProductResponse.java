@@ -8,13 +8,7 @@ public record ProductResponse(Long productId, String name, String description, B
 		String imageUrl, Instant createdAt) {
 
 	public static ProductResponse from(Product p) {
-		return new ProductResponse(p.getProductId(),
-				p.getName(),
-				p.getDescription(),
-				p.getPrice(),
-				p.getPopularity(),
-				p.getImageUrl(),
-				p.getCreatedAt()
-		);
+		return new ProductResponse(p.getProductId(), p.getName(), p.getDescription(), p.getPrice(), p.getPopularity(),
+				p.getImageUrl(), p.getCreatedAt());
 	}
 }

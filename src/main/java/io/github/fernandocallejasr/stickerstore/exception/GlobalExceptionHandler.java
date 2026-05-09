@@ -10,9 +10,6 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ProductNotFoundException.class)
 	public ProblemDetail handleProductNotFound(ProductNotFoundException ex) {
-		return ProblemDetail.forStatusAndDetail(
-				HttpStatus.NOT_FOUND,
-				ex.getMessage()
-		);
+		return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
 	}
 }

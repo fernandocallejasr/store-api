@@ -5,6 +5,7 @@ import io.github.fernandocallejasr.stickerstore.service.ProductService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -21,6 +22,11 @@ public class ProductController {
     @GetMapping
     public List<ProductResponse> getProducts() {
         return productService.getProducts();
+    }
+
+    @GetMapping("/{productId}")
+    public ProductResponse getProductById(@PathVariable long productId) {
+        return productService.getProductById(productId);
     }
 
 }

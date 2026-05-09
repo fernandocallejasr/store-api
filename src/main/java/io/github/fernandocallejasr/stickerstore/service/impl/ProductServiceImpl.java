@@ -1,6 +1,7 @@
 package io.github.fernandocallejasr.stickerstore.service.impl;
 
 import io.github.fernandocallejasr.stickerstore.dto.ProductResponse;
+import io.github.fernandocallejasr.stickerstore.exception.ProductNotFoundException;
 import io.github.fernandocallejasr.stickerstore.repository.ProductRepository;
 import io.github.fernandocallejasr.stickerstore.service.ProductService;
 import org.springframework.stereotype.Service;
@@ -24,5 +25,12 @@ public class ProductServiceImpl implements ProductService {
                                 .stream()
                                 .map(ProductResponse::from)
                                 .toList();
+    }
+
+    @Override
+    public ProductResponse getProductById(long productId) {
+        return productRepository.findById(productId)
+                                .map(ProductResponse::from)
+                                .orElseThrow(() -> new ProductNotFoundException(productId));
     }
 }

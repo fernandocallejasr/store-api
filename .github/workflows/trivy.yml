@@ -10,7 +10,6 @@ on:
 
 permissions:
   contents: read
-  actions: read           # Needed by upload-sarif to fetch workflow run metadata for SARIF fingerprinting
 
 concurrency:
   group: trivy-${{ github.ref }}

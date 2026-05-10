@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SpotBugs / FindSecBugs exclusion filter.
+
+  Add <Match> blocks here to suppress findings that are accepted/intentional.
+  Docs: https://spotbugs.readthedocs.io/en/latest/filter.html
+
+  Example:
+  <Match>
+    <Class name="io.github.fernandocallejasr.stickerstore.SomeClass"/>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+-->
+<FindBugsFilter>
+</FindBugsFilter>

@@ -20,7 +20,7 @@ public class ProductRepositoryTest {
 
 	@Test
 	void saveProductAndFindRoundTrip() {
-		Instant nowInstant = Instant.now();
+		Instant fixedInstant = Instant.parse("2026-05-10T12:00:00.123456Z");
 
 		Product p = new Product();
 		p.setName("Test");
@@ -28,7 +28,7 @@ public class ProductRepositoryTest {
 		p.setPrice(new BigDecimal("9.99"));
 		p.setPopularity(50);
 		p.setImageUrl("/stickers/test.png");
-		p.setCreatedAt(nowInstant);
+		p.setCreatedAt(fixedInstant);
 		p.setCreatedBy("test");
 
 		Product savedProduct = productRepository.save(p);
@@ -42,6 +42,6 @@ public class ProductRepositoryTest {
 		assertThat(foundProduct.getPrice()).isEqualByComparingTo("9.99");
 		assertThat(foundProduct.getPopularity()).isEqualTo(50);
 		assertThat(foundProduct.getImageUrl()).isEqualTo("/stickers/test.png");
-		assertThat(foundProduct.getCreatedAt()).isEqualTo(nowInstant);
+		assertThat(foundProduct.getCreatedAt()).isEqualTo(fixedInstant);
 	}
 }

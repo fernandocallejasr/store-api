@@ -10,7 +10,6 @@ on:
 
 permissions:
   contents: read
-  security-events: write
   actions: read           # Needed by upload-sarif to fetch workflow run metadata for SARIF fingerprinting
 
 concurrency:
@@ -37,12 +36,10 @@ jobs:
           severity: HIGH,CRITICAL
           ignore-unfixed: true
           exit-code: '1'
-          format: sarif
-          output: trivy-results.sarif
-
-      - name: Upload SARIF to GitHub Security tab
-        if: always()
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: trivy-results.sarif
-          category: trivy-fs
+          format: table
+          # Note: SARIF upload to the Security tab is omitted because Code
+          # scanning requires GitHub Advanced Security on private repos.
+          # Findings appear in the workflow log; CI fails on HIGH/CRITICAL.
+          # When this repo goes public, switch format back to `sarif`,
+          # add `output: trivy-results.sarif`, restore the upload step,
+          # and re-add `security-events: write` to permissions.

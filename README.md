@@ -45,6 +45,32 @@ curl http://localhost:8080/api/v1/products
 ```
 You should get back the 29 seeded stickers as JSON.
 
+## Observability
+
+A local Prometheus + Grafana stack lives in `compose.yaml` under the `observability` profile, so `docker compose up` keeps starting only Postgres. Spring Boot Actuator + Micrometer expose the metrics.
+
+### Start the stack
+```
+docker compose --profile observability up -d
+./mvnw spring-boot:run    # in another terminal
+```
+
+| Service          | URL                                                | Notes                                            |
+|------------------|----------------------------------------------------|--------------------------------------------------|
+| Actuator         | http://localhost:8080/actuator                     | exposes `health`, `info`, `metrics`, `prometheus`|
+| Liveness probe   | http://localhost:8080/actuator/health/liveness     | JVM-only check                                   |
+| Readiness probe  | http://localhost:8080/actuator/health/readiness    | includes the database                            |
+| Prometheus       | http://localhost:9090                              | scrapes the app every 15s                        |
+| Grafana          | http://localhost:3000                              | login `admin` / `admin`; one dashboard auto-provisioned |
+
+The `ProductService` is instrumented with two custom Micrometer meters: `products.list` (timer) and `products.notfound` (counter), visible at `/actuator/prometheus`.
+
+### Wipe observability state
+Both Prometheus and Grafana use `tmpfs`, so a container restart wipes them. To fully tear down without touching Postgres:
+```
+docker compose rm -fsv prometheus grafana
+```
+
 ## Tests
 ```
 ./mvnw clean test

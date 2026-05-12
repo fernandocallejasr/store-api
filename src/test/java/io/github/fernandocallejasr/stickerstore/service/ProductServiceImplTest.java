@@ -9,13 +9,16 @@ import io.github.fernandocallejasr.stickerstore.entity.Product;
 import io.github.fernandocallejasr.stickerstore.exception.ProductNotFoundException;
 import io.github.fernandocallejasr.stickerstore.repository.ProductRepository;
 import io.github.fernandocallejasr.stickerstore.service.impl.ProductServiceImpl;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -24,8 +27,15 @@ public class ProductServiceImplTest {
 
 	@Mock
 	ProductRepository productRepository;
-	@InjectMocks
+
+	MeterRegistry meterRegistry;
 	ProductServiceImpl productService;
+
+	@BeforeEach
+	void setUp() {
+		meterRegistry = new SimpleMeterRegistry();
+		productService = new ProductServiceImpl(productRepository, meterRegistry);
+	}
 
 	@Test
 	void getProducts_mapsEntitiesToResponses() {
@@ -84,5 +94,33 @@ public class ProductServiceImplTest {
 
 		assertThatThrownBy(() -> productService.getProductById(999L)).isInstanceOf(ProductNotFoundException.class)
 				.hasMessageContaining("999");
+	}
+
+	@Test
+	void getProducts_recordsListTimer() {
+		when(productRepository.findAll()).thenReturn(List.of());
+
+		productService.getProducts();
+		productService.getProducts();
+
+		assertThat(Objects.requireNonNull(meterRegistry.find("products.list").timer()).count()).isEqualTo(2L);
+	}
+
+	@Test
+	void getProductById_incrementsNotFoundCounterWhenMissing() {
+		when(productRepository.findById(999L)).thenReturn(Optional.empty());
+
+		assertThatThrownBy(() -> productService.getProductById(999L)).isInstanceOf(ProductNotFoundException.class);
+
+		assertThat(Objects.requireNonNull(meterRegistry.find("products.notfound").counter()).count()).isEqualTo(1.0);
+	}
+
+	@Test
+	void getProductById_doesNotIncrementNotFoundCounterWhenFound() {
+		when(productRepository.findById(1L)).thenReturn(Optional.of(new Product()));
+
+		productService.getProductById(1L);
+
+		assertThat(meterRegistry.find("products.notfound").counter().count()).isEqualTo(0.0);
 	}
 }

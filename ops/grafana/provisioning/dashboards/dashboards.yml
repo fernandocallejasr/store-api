@@ -1,0 +1,15 @@
+# /var/lib/grafana/dashboards is a read-only bind mount of ops/grafana/dashboards
+# (see compose.yaml).
+apiVersion: 1
+
+providers:
+  - name: stickerstore
+    orgId: 1
+    folder: ''
+    type: file
+    disableDeletion: true
+    allowUiUpdates: false
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: false

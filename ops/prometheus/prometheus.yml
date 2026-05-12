@@ -1,0 +1,13 @@
+# The Spring Boot app is expected to run on the host (mvn spring-boot:run),
+# so we target host.docker.internal rather than a Compose service name.
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+
+scrape_configs:
+  - job_name: stickerstore
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8080"]
+        labels:
+          instance: stickerstore-local

@@ -14,6 +14,12 @@
 	<properties>
 		<java.version>25</java.version>
 		<postgresql.version>42.7.11</postgresql.version>
+		<!--
+			Override Spring Boot 4.0.6's pinned Tomcat (11.0.21) to pick up
+			the fix for CVE-2026-41293 (Improper Input Validation, CRITICAL).
+			Remove this override once Spring Boot 4.0.7+ ships with 11.0.22+.
+		-->
+		<tomcat.version>11.0.22</tomcat.version>
 	</properties>
 	<dependencies>
 		<dependency>

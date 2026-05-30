@@ -104,6 +104,7 @@
 						</includes>
 						<eclipse>
 							<version>4.36</version>
+							<file>${project.basedir}/eclipse-formatter.xml</file>
 						</eclipse>
 						<importOrder/>
 						<removeUnusedImports>

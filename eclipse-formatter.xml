@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<profiles version="23">
+	<profile kind="CodeFormatterProfile" name="stickerstore" version="23">
+		<!-- Respect manual line breaks instead of collapsing wrapped lines back
+		     onto one dense line. Lets us write one constructor/method parameter
+		     per line without Spotless flagging it. -->
+		<setting id="org.eclipse.jdt.core.formatter.join_wrapped_lines" value="false"/>
+		<setting id="org.eclipse.jdt.core.formatter.join_lines_in_comments" value="false"/>
+	</profile>
+</profiles>

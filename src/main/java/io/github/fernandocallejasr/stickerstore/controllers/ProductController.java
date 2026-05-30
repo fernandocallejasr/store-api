@@ -2,6 +2,7 @@ package io.github.fernandocallejasr.stickerstore.controllers;
 
 import io.github.fernandocallejasr.stickerstore.dto.ProductResponse;
 import io.github.fernandocallejasr.stickerstore.service.ProductService;
+import jakarta.validation.constraints.Min;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,7 @@ public class ProductController {
 	}
 
 	@GetMapping("/{productId}")
-	public ResponseEntity<ProductResponse> getProductById(@PathVariable long productId) {
+	public ResponseEntity<ProductResponse> getProductById(@PathVariable @Min(1) long productId) {
 		return ResponseEntity.ok(productService.getProductById(productId));
 	}
 

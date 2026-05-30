@@ -58,6 +58,13 @@ public class ProductControllerTest {
 	}
 
 	@Test
+	void getProductById_returns400WhenIdNotPositive() throws Exception {
+		mockMvc.perform(get(PRODUCTS_PATH + "/0")).andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.status").value(400))
+				.andExpect(jsonPath("$.detail").value("Request validation failed"));
+	}
+
+	@Test
 	void getProductById_returns404WhenNotFound() throws Exception {
 		when(productService.getProductById(999L)).thenThrow(new ProductNotFoundException(999L));
 

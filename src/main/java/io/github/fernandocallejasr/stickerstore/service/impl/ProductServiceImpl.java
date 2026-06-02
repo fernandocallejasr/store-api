@@ -8,12 +8,16 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class ProductServiceImpl implements ProductService {
+
+	private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
 
 	private final ProductRepository productRepository;
 	private final Timer productsListTimer;
@@ -29,11 +33,17 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public List<ProductResponse> getProducts() {
-		return productsListTimer.record(() -> productRepository.findAll().stream().map(ProductResponse::from).toList());
+		log.debug("Fetching all products");
+		Timer.Sample sample = Timer.start();
+		List<ProductResponse> products = productRepository.findAll().stream().map(ProductResponse::from).toList();
+		sample.stop(productsListTimer);
+		log.debug("Fetched {} products", products.size());
+		return products;
 	}
 
 	@Override
 	public ProductResponse getProductById(long productId) {
+		log.debug("Looking up product {}", productId);
 		return productRepository.findById(productId).map(ProductResponse::from).orElseThrow(() -> {
 			productsNotFoundCounter.increment();
 			return new ProductNotFoundException(productId);

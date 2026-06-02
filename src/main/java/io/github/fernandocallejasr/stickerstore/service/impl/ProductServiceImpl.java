@@ -35,10 +35,13 @@ public class ProductServiceImpl implements ProductService {
 	public List<ProductResponse> getProducts() {
 		log.debug("Fetching all products");
 		Timer.Sample sample = Timer.start();
-		List<ProductResponse> products = productRepository.findAll().stream().map(ProductResponse::from).toList();
-		sample.stop(productsListTimer);
-		log.debug("Fetched {} products", products.size());
-		return products;
+		try {
+			List<ProductResponse> products = productRepository.findAll().stream().map(ProductResponse::from).toList();
+			log.debug("Fetched {} products", products.size());
+			return products;
+		} finally {
+			sample.stop(productsListTimer);
+		}
 	}
 
 	@Override

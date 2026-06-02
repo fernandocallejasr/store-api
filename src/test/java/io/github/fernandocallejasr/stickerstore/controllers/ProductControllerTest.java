@@ -3,6 +3,7 @@ package io.github.fernandocallejasr.stickerstore.controllers;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import io.github.fernandocallejasr.stickerstore.dto.ProductResponse;
@@ -80,5 +81,15 @@ public class ProductControllerTest {
 		mockMvc.perform(get(PRODUCTS_PATH)).andExpect(status().isInternalServerError())
 				.andExpect(jsonPath("$.status").value(500))
 				.andExpect(jsonPath("$.detail").value("An unexpected error occurred"));
+	}
+
+	@Test
+	void getProductById_returns400WhenIdNotNumeric() throws Exception {
+		mockMvc.perform(get(PRODUCTS_PATH + "/abc")).andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void postProducts_returns405WhenMethodNotAllowed() throws Exception {
+		mockMvc.perform(post(PRODUCTS_PATH)).andExpect(status().isMethodNotAllowed());
 	}
 }

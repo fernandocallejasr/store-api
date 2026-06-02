@@ -72,4 +72,13 @@ public class ProductControllerTest {
 				.andExpect(jsonPath("$.status").value(404))
 				.andExpect(jsonPath("$.detail").value("Product not found for id: 999"));
 	}
+
+	@Test
+	void getProducts_returns500WhenUnexpectedError() throws Exception {
+		when(productService.getProducts()).thenThrow(new RuntimeException("boom"));
+
+		mockMvc.perform(get(PRODUCTS_PATH)).andExpect(status().isInternalServerError())
+				.andExpect(jsonPath("$.status").value(500))
+				.andExpect(jsonPath("$.detail").value("An unexpected error occurred"));
+	}
 }

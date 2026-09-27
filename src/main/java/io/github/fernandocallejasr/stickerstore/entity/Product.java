@@ -7,11 +7,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
-import java.time.Instant;
 
 @Entity
 @Table(name = "products")
-public class Product {
+public class Product extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,18 +31,6 @@ public class Product {
 
 	@Column(name = "image_url")
 	private String imageUrl;
-
-	@Column(name = "created_at", nullable = false)
-	private Instant createdAt;
-
-	@Column(name = "created_by", nullable = false)
-	private String createdBy;
-
-	@Column(name = "updated_at")
-	private Instant updatedAt;
-
-	@Column(name = "updated_by")
-	private String updatedBy;
 
 	public Long getProductId() {
 		return productId;
@@ -87,37 +74,5 @@ public class Product {
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
-	}
-
-	public Instant getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(Instant createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public String getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Instant getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(Instant updatedAt) {
-		this.updatedAt = updatedAt;
-	}
-
-	public String getUpdatedBy() {
-		return updatedBy;
-	}
-
-	public void setUpdatedBy(String updatedBy) {
-		this.updatedBy = updatedBy;
 	}
 }

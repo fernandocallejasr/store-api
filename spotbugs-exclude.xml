@@ -12,4 +12,35 @@
   </Match>
 -->
 <FindBugsFilter>
+
+	<!--
+	  EI_EXPOSE_REP / EI_EXPOSE_REP2 fire whenever a constructor stores a reference it did
+	  not copy. Defensive copying buys nothing in these three cases:
+	    - LoginResponse is a record built per response and never mutated afterwards.
+	    - ProblemDetailAuthenticationEntryPoint holds the container-managed ObjectMapper;
+	      copying a Spring singleton would defeat its purpose.
+	    - StickerStoreSecurityConfig holds the publicPaths bean, an immutable List.of().
+	-->
+	<Match>
+		<Class name="io.github.fernandocallejasr.stickerstore.dto.LoginResponse"/>
+		<Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+	</Match>
+	<Match>
+		<Class name="io.github.fernandocallejasr.stickerstore.security.ProblemDetailAuthenticationEntryPoint"/>
+		<Bug pattern="EI_EXPOSE_REP2"/>
+	</Match>
+	<Match>
+		<Class name="io.github.fernandocallejasr.stickerstore.security.StickerStoreSecurityConfig"/>
+		<Bug pattern="EI_EXPOSE_REP2"/>
+	</Match>
+
+	<!--
+	  CT_CONSTRUCTOR_THROW on the standard "utility class cannot be instantiated" idiom.
+	  The throw is the entire point of the private constructor.
+	-->
+	<Match>
+		<Class name="io.github.fernandocallejasr.stickerstore.constants.ApplicationConstants"/>
+		<Bug pattern="CT_CONSTRUCTOR_THROW"/>
+	</Match>
+
 </FindBugsFilter>

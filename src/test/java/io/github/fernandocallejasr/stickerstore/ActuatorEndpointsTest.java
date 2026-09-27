@@ -65,11 +65,12 @@ public class ActuatorEndpointsTest {
 
 	@Test
 	void sensitiveEndpoints_areNotExposed() {
+		// Not in publicPaths, so security rejects these before routing can 404 them.
 		assertThat(restTemplate.getForEntity("/actuator/env", String.class).getStatusCode())
-				.isEqualTo(HttpStatus.NOT_FOUND);
+				.isEqualTo(HttpStatus.UNAUTHORIZED);
 		assertThat(restTemplate.getForEntity("/actuator/beans", String.class).getStatusCode())
-				.isEqualTo(HttpStatus.NOT_FOUND);
+				.isEqualTo(HttpStatus.UNAUTHORIZED);
 		assertThat(restTemplate.getForEntity("/actuator/heapdump", String.class).getStatusCode())
-				.isEqualTo(HttpStatus.NOT_FOUND);
+				.isEqualTo(HttpStatus.UNAUTHORIZED);
 	}
 }

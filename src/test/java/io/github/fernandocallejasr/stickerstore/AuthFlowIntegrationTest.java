@@ -33,7 +33,7 @@ public class AuthFlowIntegrationTest {
 
 	private static final String REGISTER_PATH = "/api/v1/auth/register";
 	private static final String LOGIN_PATH = "/api/v1/auth/login";
-	private static final String PROTECTED_ACTUATOR_PATH = "/actuator/metrics";
+	private static final String PROFILE_PATH = "/api/v1/profile";
 	private static final String REGISTERED_PASSWORD = "password123";
 
 	@Autowired
@@ -318,7 +318,7 @@ public class AuthFlowIntegrationTest {
 
 	@Test
 	void protectedEndpointRejectsRequestWithoutToken() {
-		ResponseEntity<String> response = getWithAuthorization(PROTECTED_ACTUATOR_PATH, null);
+		ResponseEntity<String> response = getWithAuthorization(PROFILE_PATH, null);
 
 		assertAuthenticationRequiredProblem(response);
 	}
@@ -327,21 +327,66 @@ public class AuthFlowIntegrationTest {
 	void protectedEndpointAcceptsValidBearerToken() {
 		String token = tokenFor("bearer@example.com", "5550000007");
 
-		ResponseEntity<String> response = getWithAuthorization(PROTECTED_ACTUATOR_PATH, "Bearer " + token);
+		ResponseEntity<String> response = getWithAuthorization(PROFILE_PATH, "Bearer " + token);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		Map<String, Object> body = objectMapper.readValue(response.getBody(), new TypeReference<>() {
+		});
+		assertThat(body).containsEntry("email", "bearer@example.com")
+				.containsEntry("name", "Registered User")
+				.containsEntry("mobileNumber", "5550000007");
+
+		Long registeredUserId = userRepository.findByEmail("bearer@example.com").orElseThrow().getUserId();
+		assertThat(((Number) body.get("userId")).longValue()).isEqualTo(registeredUserId);
+	}
+
+	@Test
+	void profileReflectsNameChangedAfterLogin() {
+		String email = "profile-rename@example.com";
+		String token = tokenFor(email, "5550000021");
+
+		User user = userRepository.findByEmail(email).orElseThrow();
+		user.setName("Renamed User");
+		userRepository.save(user);
+
+		ResponseEntity<String> response = getWithAuthorization(PROFILE_PATH, "Bearer " + token);
+
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		Map<String, Object> body = objectMapper.readValue(response.getBody(), new TypeReference<>() {
+		});
+		assertThat(body).containsEntry("name", "Renamed User");
+	}
+
+	@Test
+	void profileReturnsNotFoundWhenUserDeletedAfterLogin() {
+		String email = "profile-deleted@example.com";
+		String token = tokenFor(email, "5550000022");
+
+		userRepository.delete(userRepository.findByEmail(email).orElseThrow());
+
+		ResponseEntity<String> response = getWithAuthorization(PROFILE_PATH, "Bearer " + token);
+
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+		assertThat(response.getHeaders().getContentType())
+				.matches(MediaType.APPLICATION_PROBLEM_JSON::equalsTypeAndSubtype);
+
+		Map<String, Object> problem = objectMapper.readValue(response.getBody(), new TypeReference<>() {
+		});
+		assertThat(problem).containsEntry("status", 404).containsEntry("title", "Not Found");
 	}
 
 	@Test
 	void protectedEndpointRejectsMalformedToken() {
-		ResponseEntity<String> response = getWithAuthorization(PROTECTED_ACTUATOR_PATH, "Bearer not.a.jwt");
+		ResponseEntity<String> response = getWithAuthorization(PROFILE_PATH, "Bearer not.a.jwt");
 
 		assertAuthenticationRequiredProblem(response);
 	}
 
 	@Test
 	void protectedEndpointIgnoresNonBearerAuthorizationHeader() {
-		ResponseEntity<String> response = getWithAuthorization(PROTECTED_ACTUATOR_PATH,
+		ResponseEntity<String> response = getWithAuthorization(PROFILE_PATH,
 				"Basic Ym9ndXM6Y3JlZGVudGlhbHM=");
 
 		assertAuthenticationRequiredProblem(response);

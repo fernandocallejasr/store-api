@@ -61,11 +61,14 @@ The product endpoints are public; for anything else, log in to get a JWT (valid 
 | `GET`  | `/api/v1/products/{productId}` | Public       | Get one product by ID                                           |
 | `POST` | `/api/v1/auth/register`        | Public       | Create an account (`name`, `email`, `mobileNumber`, `password`) |
 | `POST` | `/api/v1/auth/login`           | Public       | Log in with `username` (the email) and `password`               |
+| `GET`  | `/api/v1/profile`              | Bearer token | Get your profile (`userId`, `name`, `email`, `mobileNumber`)    |
 | `GET`  | `/actuator/metrics`            | Bearer token | List the available metrics (dev profile only)                   |
 
 Register returns `201`. A request body that fails validation returns `400`, with the messages for each field under `errors`, 
 and an email or mobile number that's already registered returns `409`. 
 Login returns the token (`jwtToken`) and the `user`. A wrong email and a wrong password get the same `401`.
+The profile is read from the database on every call, so changes to the account show up right away, even with a token issued before them.
+If the account no longer exists, the profile returns `404`.
 
 ## Observability
 

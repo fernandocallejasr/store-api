@@ -83,12 +83,6 @@ public class AuthController {
 	private UserDto getUserDto(Authentication authentication) {
 		AuthenticatedUser authenticatedUser = (AuthenticatedUser) Objects.requireNonNull(authentication.getPrincipal());
 
-		UserDto userDto = new UserDto();
-		userDto.setUserId(authenticatedUser.userId());
-		userDto.setName(authenticatedUser.name());
-		userDto.setEmail(authenticatedUser.email());
-		userDto.setMobileNumber(authenticatedUser.mobileNumber());
-
-		return userDto;
+		return UserDto.from(authenticatedUser);
 	}
 }

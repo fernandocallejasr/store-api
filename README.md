@@ -2,6 +2,7 @@
 
 A Spring Boot REST API for a stickers e-commerce store.
 Built with Spring Boot 4.1.0, Java 25, JPA + Flyway, runs on H2 (dev) or Postgres (prod).
+The React storefront that talks to this API lives in [store-ui](https://github.com/fernandocallejasr/store-ui).
 
 > **`JWT_SECRET` is required.** It's the key the app uses to sign and verify login tokens. 
 > It must be at least 32 bytes, and the app refuses to start without it. Generate one with `openssl rand -base64 48`. 
@@ -49,7 +50,7 @@ Once the app is up (either mode), hit the products endpoint:
 ```
 curl http://localhost:8080/api/v1/products
 ```
-You should get back the 29 seeded stickers as JSON.
+You should get back the 19 seeded stickers as JSON.
 
 ## Authentication
 
@@ -101,3 +102,12 @@ docker compose rm -fsv prometheus grafana
 ```
 ./mvnw clean test
 ```
+
+## Credits
+
+The project was built while following the Eazy Bytes full-stack React and Spring
+Boot course ([course repository](https://github.com/eazybytes/fullstack-react-springboot)). The original product
+catalogue (names, descriptions and image paths) comes from that course and remains
+the property of its respective owners. Products depicting real people or
+third-party brands, shows and characters are removed by
+`V5__remove_third_party_stickers.sql`.

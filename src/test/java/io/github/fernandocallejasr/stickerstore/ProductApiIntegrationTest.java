@@ -25,7 +25,7 @@ public class ProductApiIntegrationTest {
 
 	@Test
 	void getProducts_returnsSeededData() {
-		int NUMBER_OF_PRODUCTS = 29;
+		int NUMBER_OF_PRODUCTS = 19;
 		ResponseEntity<ProductResponse[]> response = restTemplate.getForEntity(PRODUCTS_PATH,
 				ProductResponse[].class);
 

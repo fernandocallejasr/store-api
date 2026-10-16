@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: read
+  security-events: write
 
 concurrency:
   group: trivy-${{ github.ref }}
@@ -35,10 +36,18 @@ jobs:
           severity: HIGH,CRITICAL
           ignore-unfixed: true
           exit-code: '1'
-          format: table
-          # Note: SARIF upload to the Security tab is omitted because Code
-          # scanning requires GitHub Advanced Security on private repos.
-          # Findings appear in the workflow log; CI fails on HIGH/CRITICAL.
-          # When this repo goes public, switch format back to `sarif`,
-          # add `output: trivy-results.sarif`, restore the upload step,
-          # and re-add `security-events: write` to permissions.
+          # SARIF keeps findings out of the public workflow log; they go to the
+          # Security tab, which only people with write access can see.
+          format: sarif
+          output: trivy-results.sarif
+          # Without this, SARIF output ignores `severity` and reports (and fails
+          # on) every level, LOW included.
+          limit-severities-for-sarif: true
+
+      - name: Upload results to the Security tab
+        # The scan step fails when it finds something (exit-code 1), which is
+        # exactly when the results matter, so upload regardless.
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-results.sarif
